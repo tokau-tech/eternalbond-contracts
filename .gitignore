@@ -1,0 +1,13 @@
+client
+build
+node_modules
+
+.vscode
+.openzeppelin
+.env
+
+.DS_Store
+screenlog*
+
+yarn-error.log
+yarn.lock
