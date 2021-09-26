@@ -35,6 +35,17 @@ contract EBChef is IEBChef, Initializable, OwnableUpgradeable {
     event NFT1155Minted(address indexed vault, address indexed user, uint tokenId, uint amount);
 
     function initialize(uint _totalEmission) public initializer {
+        __EBChef_init(_totalEmission);
+    }
+
+    function __EBChef_init(uint _totalEmission) internal initializer {
+        __Context_init_unchained();
+        __Ownable_init_unchained();
+
+        __EBChef_init_unchained(_totalEmission);
+    }
+
+    function __EBChef_init_unchained(uint _totalEmission) internal initializer {
         totalEmission = _totalEmission;
     }
 

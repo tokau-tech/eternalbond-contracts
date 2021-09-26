@@ -14,6 +14,17 @@ contract OreMinter is Base1155Minter {
     using AddressUpgradeable for address;
 
     function initialize(address _chef, address _token) public initializer {
+        __OreMinter_init(_chef, _token);
+    }
+
+    function __OreMinter_init(address _chef, address _token) internal initializer {
+        __Ownable_init_unchained();
+        __Context_init_unchained();
+
+        __OreMinter_init_unchained(_chef, _token);
+    }
+
+    function __OreMinter_init_unchained(address _chef, address _token) internal initializer {
         setChef(_chef);
         setToken(_token);
     }

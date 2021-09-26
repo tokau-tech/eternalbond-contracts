@@ -1,4 +1,11 @@
 {
+  "name": "eternal-bond-contracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha --exit --recursive"
+  },
   "dependencies": {
     "web3": "^1.4.0",
     "web3-utils": "^1.4.0"

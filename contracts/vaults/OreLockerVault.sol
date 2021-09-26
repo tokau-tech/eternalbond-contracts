@@ -39,6 +39,19 @@ contract OreLockerVault is BaseVault {
     mapping(address => UserLockerInfo[]) balances;
 
     function initialize(address _chef, address _token, uint _oreTokenId, uint _emissionRate) public initializer {
+        __OreLockerVault_init(_chef, _token, _oreTokenId, _emissionRate);
+    }
+
+    function __OreLockerVault_init(address _chef, address _token, uint _oreTokenId, uint _emissionRate) internal initializer {
+        __Ownable_init_unchained();
+        __Context_init_unchained();
+        __Pausable_init_unchained();
+        __ReentrancyGuard_init_unchained();
+
+        __OreLockerVault_init_unchained(_chef, _token, _oreTokenId, _emissionRate);
+    }
+
+    function __OreLockerVault_init_unchained(address _chef, address _token, uint _oreTokenId, uint _emissionRate) internal initializer {
         setChef(_chef);
         setToken(_token);
         setEmissionRate(_emissionRate);
