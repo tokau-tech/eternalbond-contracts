@@ -4,10 +4,10 @@ pragma solidity ^0.8.3;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 
-import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/IBEP20.sol';
-import '@pancakeswap/pancake-swap-lib/contracts/token/BEP20/SafeBEP20.sol';
-import "@pancakeswap/pancake-swap-lib/contracts/math/SafeMath.sol";
+import '../interfaces/pancake-swap-lib/IBEP20.sol';
+import '../interfaces/pancake-swap-lib/SafeBEP20.sol';
 
 import "./BaseVault.sol";
 import "../interfaces/IEBChef.sol";
@@ -19,7 +19,7 @@ import { EBConstants } from "../library/EBConstants.sol";
     using a fixed emission rate.
 */
 contract OreLockerVault is BaseVault {
-    using SafeMath for uint;
+    using SafeMathUpgradeable for uint;
     using SafeBEP20 for IBEP20;
 
     struct UserLockerInfo {
@@ -49,10 +49,6 @@ contract OreLockerVault is BaseVault {
         oreTokenId = _oreTokenId;
     }
 
-    function setEmissionRate(uint _emissionRate) public onlyOwner  {
-        emissionRate = _emissionRate;
-    }
-
     function setEmissionRate(uint _emissionRate) public onlyOwner {
         require(_emissionRate > 0, "error parameters");
         emissionRate = _emissionRate;
@@ -80,13 +76,13 @@ contract OreLockerVault is BaseVault {
         _deposit(0, amount);
     }
 
-    function withdraw(uint amount) public override notPaused nonReentrant {
+    function withdraw(uint amount) public override whenNotPaused nonReentrant {
         require(amount > 0, "invalid amount");
         _withdraw(amount);
     }
 
-    function withdrawAll() public override notPaused nonReentrant {
-        _withdraw(-1);
+    function withdrawAll() public override whenNotPaused nonReentrant {
+        _withdraw(unlockedBalance());
     }
 
     function balanceOf() public view override returns (uint) {
@@ -115,18 +111,17 @@ contract OreLockerVault is BaseVault {
         return balance;
     }
 
-    function _deposit(uint periodIndex, uint _amount) private notPaused nonReentrant {
+    function _deposit(uint periodIndex, uint _amount) private whenNotPaused nonReentrant {
         require(periods[periodIndex] > 0, "invalid period given");
 
         IBEP20(token).safeTransferFrom(msg.sender, address(this), _amount);
         totalAmount = totalAmount.add(_amount);
         
-        UserLockerInfo storage newLocker = UserLockerInfo(periods[periodIndex], lockerBoosters[periods[periodIndex]], _amount, 0, block.timestamp);
+        UserLockerInfo memory newLocker = UserLockerInfo(periods[periodIndex], lockerBoosters[periods[periodIndex]], _amount, 0, block.timestamp);
         UserLockerInfo[] storage lockerInfos = balances[msg.sender];
         if (lockerInfos.length > 0) {
             lockerInfos.push(newLocker);
         } else {
-            balances[msg.sender] = new uint[]();
             balances[msg.sender].push(newLocker);
         }
 
@@ -140,7 +135,7 @@ contract OreLockerVault is BaseVault {
         return oreAmount;
     }
 
-    function _withdraw(uint _amount) private notPaused nonReentrant {
+    function _withdraw(uint _amount) private whenNotPaused nonReentrant {
         bool isWithdrawAll = _amount < 0 ? true : false;
         uint amountCanWithdraw = unlockedBalance();
         require(amountCanWithdraw > 0, "no token to withdraw");

@@ -7,14 +7,11 @@ import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
-import "@pancakeswap/pancake-swap-lib/contracts/math/SafeMath.sol";
-
 import "../interfaces/IEBVault.sol";
 
 import { EBConstants } from "../library/EBConstants.sol";
 
 abstract contract BaseVault is IEBVault, Initializable, OwnableUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
-    using SafeMath for uint;
     using AddressUpgradeable for address;
 
     address public chef;

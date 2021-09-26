@@ -6,7 +6,7 @@ interface IEBVault {
 
     function isErc1155Token() external pure returns (bool);
 
-    function balanceOf() external view;
+    function balanceOf() external view returns (uint);
 
     function deposit(uint amount) external;
 

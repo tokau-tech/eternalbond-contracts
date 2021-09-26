@@ -9,6 +9,7 @@ library EBConstants {
     struct VaultInfo {
         address token;
         uint totalAmount;
+        uint emission;
         uint lastDepositBlock;
     }
 

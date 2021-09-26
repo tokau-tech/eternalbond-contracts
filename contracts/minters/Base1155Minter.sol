@@ -5,15 +5,12 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 
-import "@pancakeswap/pancake-swap-lib/contracts/math/SafeMath.sol";
-
 import "../interfaces/IEB1155Minter.sol";
 import "../interfaces/IERC1155MintableBurnableUpgradeable.sol";
 
 import { EBConstants } from "../library/EBConstants.sol";
 
 abstract contract Base1155Minter is IEB1155Minter, Initializable, OwnableUpgradeable {
-    using SafeMath for uint;
     using AddressUpgradeable for address;
 
     address public chef;
