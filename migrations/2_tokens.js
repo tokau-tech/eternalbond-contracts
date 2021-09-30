@@ -3,9 +3,10 @@ const TokAuStarry = artifacts.require("TokAuStarry");
 const TokAuTreasurePeriphery = artifacts.require("TokAuTreasurePeriphery");
 const TokAuTreasures = artifacts.require("TokAuTreasures");
 
-module.exports = async function(deployer) {
-    await deployer.deploy(TokAu);
-    await deployer.deploy(TokAuStarry);
-    await deployer.deploy(TokAuTreasurePeriphery);
-    await deployer.deploy(TokAuTreasures);
+module.exports = async function(deployer, network, accounts) {
+    var tokau = await deployer.deploy(TokAu);
+    var tokauStarry = await deployer.deploy(TokAuStarry);
+    var tokauTreasurePeriphery = await deployer.deploy(TokAuTreasurePeriphery);
+    var tokauTreasures = await deployer.deploy(TokAuTreasures);
+    await tokauTreasures.initialize("https://api-testnets.tokau.io/");
 }

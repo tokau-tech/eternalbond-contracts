@@ -32,11 +32,16 @@ contract OreLockerVault is BaseVault {
 
     uint public oreTokenId;
     uint public totalAmount;
-    uint public emissionRate;
+    uint public override emissionRate;
 
     uint[] public periods;
-    mapping(uint => uint) lockerBoosters;
-    mapping(address => UserLockerInfo[]) balances;
+    mapping(uint => uint) public lockerBoosters;
+    mapping(address => UserLockerInfo[]) public balances;
+
+    event OreLockerVaultDeposited(address user, uint period, uint amount);
+    event OreLockerVaultWithdrawn(address user, uint amount);
+    event OreEmissionRateChanged(uint oldEmissionRate, uint newEmissionRate);
+    event OreBosstersChanged(uint[] indexed _periods, uint[] indexed _boostRates);
 
     function initialize(address _chef, address _token, uint _oreTokenId, uint _emissionRate) public initializer {
         __OreLockerVault_init(_chef, _token, _oreTokenId, _emissionRate);
@@ -64,7 +69,9 @@ contract OreLockerVault is BaseVault {
 
     function setEmissionRate(uint _emissionRate) public onlyOwner {
         require(_emissionRate > 0, "error parameters");
+        uint oldEmissionRate = emissionRate;
         emissionRate = _emissionRate;
+        emit OreEmissionRateChanged(oldEmissionRate, emissionRate);
     }
 
     function isErc1155Token() public pure override returns (bool) {
@@ -78,6 +85,7 @@ contract OreLockerVault is BaseVault {
             lockerBoosters[_periods[i]] = _boostRates[i];
             periods.push(_periods[i]);
         }
+        emit OreBosstersChanged(_periods, _boostRates);
     }
 
     function depositLocker(uint periodIndex, uint amount) public nonReentrant {
@@ -89,13 +97,13 @@ contract OreLockerVault is BaseVault {
         _deposit(0, amount);
     }
 
-    function withdraw(uint amount) public override whenNotPaused nonReentrant {
-        require(amount > 0, "invalid amount");
+    function withdraw(uint amount) public override nonReentrant {
+        require(amount > 0 && amount <= unlockedBalance(), "invalid amount");
         _withdraw(amount);
     }
 
-    function withdrawAll() public override whenNotPaused nonReentrant {
-        _withdraw(unlockedBalance());
+    function withdrawAll() public override nonReentrant {
+        _withdraw(0);
     }
 
     function balanceOf() public view override returns (uint) {
@@ -124,8 +132,8 @@ contract OreLockerVault is BaseVault {
         return balance;
     }
 
-    function _deposit(uint periodIndex, uint _amount) private whenNotPaused nonReentrant {
-        require(periods[periodIndex] > 0, "invalid period given");
+    function _deposit(uint periodIndex, uint _amount) private whenNotPaused {
+        require(periods.length > periodIndex && periods[periodIndex] > 0 && _amount > 0, "invalid period given");
 
         IBEP20(token).safeTransferFrom(msg.sender, address(this), _amount);
         totalAmount = totalAmount.add(_amount);
@@ -137,19 +145,21 @@ contract OreLockerVault is BaseVault {
         } else {
             balances[msg.sender].push(newLocker);
         }
-
+        
         IEBChef(chef).vaultDeposited(msg.sender, _amount);
-        IEBChef(chef).safeMint1155(msg.sender, oreTokenId, rewardOreAmount(_amount, periods[periodIndex]));
+        IEBChef(chef).safeMint1155(msg.sender, oreTokenId, rewardOreAmount(_amount, lockerBoosters[periods[periodIndex]]));
+
+        emit OreLockerVaultDeposited(msg.sender, periods[periodIndex], _amount);
     }
 
     function rewardOreAmount(uint amount, uint boostRate) public view returns (uint) {
         uint decimals = IBEP20(token).decimals();
-        uint oreAmount = amount.mul(emissionRate).mul(boostRate).div(decimals).div(1e9); //calculate token amount as billion
+        uint oreAmount = amount.mul(emissionRate).mul(boostRate).div(10 ** decimals).div(1e11); //calculate token amount unit: billion, and boostRate uint: hundred
         return oreAmount;
     }
 
-    function _withdraw(uint _amount) private whenNotPaused nonReentrant {
-        bool isWithdrawAll = _amount < 0 ? true : false;
+    function _withdraw(uint _amount) private whenNotPaused {
+        bool isWithdrawAll = _amount == 0 ? true : false;
         uint amountCanWithdraw = unlockedBalance();
         require(amountCanWithdraw > 0, "no token to withdraw");
 
@@ -185,6 +195,8 @@ contract OreLockerVault is BaseVault {
 
         IBEP20(token).safeTransfer(msg.sender, withdrawingAmountMark);
         IEBChef(chef).vaultWithdrawn(msg.sender, withdrawingAmountMark);
+
+        emit OreLockerVaultWithdrawn(msg.sender, withdrawingAmountMark);
     }
 }
 

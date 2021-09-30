@@ -28,7 +28,7 @@ contract EBChef is IEBChef, Initializable, OwnableUpgradeable {
     mapping(address => mapping(address => EBConstants.UserInfo)) vaultUsers;
     
     modifier onlyVaults {
-        require(vaults[msg.sender].token != address(0), "OreChef: caller is not on the vault");
+        require(vaults[msg.sender].token != address(0), "Chef: caller is not on the vault");
         _;
     }
     
@@ -61,15 +61,16 @@ contract EBChef is IEBChef, Initializable, OwnableUpgradeable {
         minter = _minter;
     }
 
-    function addVault(address vault, address token, uint emission) public onlyOwner {
-        require(vaults[vault].token == address(0), "OreChef: vault exists");
+    function addVault(address vault) public onlyOwner {
+        require(vaults[vault].token == address(0), "Chef: vault exists");
+        require(IEBVault(vault).token() != address(0), "invalid vault");
         
-        totalEmission = totalEmission.add(emission);
-        vaults[vault] = EBConstants.VaultInfo(token, 0, emission, block.number);
+        totalEmission = totalEmission.add(IEBVault(vault).emissionRate());
+        vaults[vault] = EBConstants.VaultInfo(IEBVault(vault).token(), 0, IEBVault(vault).emissionRate(), block.number);
     }
 
     function updateVault(address vault, address _token, uint emission) public onlyOwner {
-        require(vaults[vault].token == address(0), "OreChef: vault doesn't exists");
+        require(vaults[vault].token == address(0), "Chef: vault doesn't exists");
         
         uint _emission = vaults[vault].emission;
         if (_emission != emission) {
@@ -80,8 +81,8 @@ contract EBChef is IEBChef, Initializable, OwnableUpgradeable {
     } 
 
     function vaultDeposited(address user, uint amount) external override onlyVaults {
-        EBConstants.UserInfo memory _userInfo = vaultUsers[msg.sender][user];
-        EBConstants.VaultInfo memory _vaultInfo = vaults[msg.sender];
+        EBConstants.UserInfo storage _userInfo = vaultUsers[msg.sender][user];
+        EBConstants.VaultInfo storage _vaultInfo = vaults[msg.sender];
 
         _vaultInfo.lastDepositBlock = block.number;
         _vaultInfo.totalAmount = _vaultInfo.totalAmount.add(amount);
@@ -92,8 +93,8 @@ contract EBChef is IEBChef, Initializable, OwnableUpgradeable {
     }
 
     function vaultWithdrawn(address user, uint amount) external override onlyVaults {
-        EBConstants.UserInfo memory _userInfo = vaultUsers[msg.sender][user];
-        EBConstants.VaultInfo memory _vaultInfo = vaults[msg.sender];
+        EBConstants.UserInfo storage _userInfo = vaultUsers[msg.sender][user];
+        EBConstants.VaultInfo storage _vaultInfo = vaults[msg.sender];
 
         _vaultInfo.totalAmount = _vaultInfo.totalAmount.sub(amount);
 
