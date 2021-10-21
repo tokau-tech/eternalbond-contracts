@@ -15,8 +15,8 @@ import "../interfaces/IEBChef.sol";
 import { EBConstants } from "../library/EBConstants.sol";
 
 /*
-    lock token but claim rewards when they just deposited related tokens.
-    using a fixed emission rate.
+    lock token and mint 1155 nft rewards when they just deposited related tokens.
+    using a given emission rate.
 */
 contract OreLockerVault is BaseVault {
     using SafeMathUpgradeable for uint;
