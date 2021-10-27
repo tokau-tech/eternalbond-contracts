@@ -72,7 +72,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: ">=0.4.0",
+      version: "0.8.3",
     },
   },
   // Truffle DB is currently disabled by default; to enable it, change enabled: false to enabled: true

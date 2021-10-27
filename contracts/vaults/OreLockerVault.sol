@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.3;
+pragma solidity 0.8.3;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -25,8 +25,7 @@ contract OreLockerVault is BaseVault {
     struct UserLockerInfo {
         uint period;
         uint boostRate;
-        uint depositedAmount;
-        uint withdrawnAmount;
+        uint balance;
         uint depositTimestamp;
     }
 
@@ -41,7 +40,7 @@ contract OreLockerVault is BaseVault {
     event OreLockerVaultDeposited(address user, uint period, uint amount);
     event OreLockerVaultWithdrawn(address user, uint amount);
     event OreEmissionRateChanged(uint oldEmissionRate, uint newEmissionRate);
-    event OreBosstersChanged(uint[] indexed _periods, uint[] indexed _boostRates);
+    event OreBoostersChanged(uint[] indexed _periods, uint[] indexed _boostRates);
 
     function initialize(address _chef, address _token, uint _oreTokenId, uint _emissionRate) public initializer {
         __OreLockerVault_init(_chef, _token, _oreTokenId, _emissionRate);
@@ -68,7 +67,7 @@ contract OreLockerVault is BaseVault {
     }
 
     function setEmissionRate(uint _emissionRate) public onlyOwner {
-        require(_emissionRate > 0, "error parameters");
+        require(_emissionRate > 0, "emissionRate should greater than 0");
         uint oldEmissionRate = emissionRate;
         emissionRate = _emissionRate;
         emit OreEmissionRateChanged(oldEmissionRate, emissionRate);
@@ -79,13 +78,14 @@ contract OreLockerVault is BaseVault {
     }
 
     function setLockerPeroids(uint[] memory _periods, uint[] memory _boostRates) public onlyOwner {
-        require(_periods.length == _boostRates.length, "error parameters");
+        require(_periods.length > 0, "invalid periods");
+        require(_periods.length == _boostRates.length, "periods and boostRates should have same length");
         delete periods;
         for (uint i=0; i<_periods.length; i++) {
             lockerBoosters[_periods[i]] = _boostRates[i];
             periods.push(_periods[i]);
         }
-        emit OreBosstersChanged(_periods, _boostRates);
+        emit OreBoostersChanged(_periods, _boostRates);
     }
 
     function depositLocker(uint periodIndex, uint amount) public nonReentrant {
@@ -93,7 +93,6 @@ contract OreLockerVault is BaseVault {
     }
 
     function deposit(uint amount) public override nonReentrant {
-        //use default period as default
         _deposit(0, amount);
     }
 
@@ -102,34 +101,30 @@ contract OreLockerVault is BaseVault {
         _withdraw(amount);
     }
 
-    function withdrawAll() public override nonReentrant {
-        _withdraw(0);
+    function balance() public view override returns (uint) {
+        return balanceOf(msg.sender);
     }
 
-    function balanceOf() public view override returns (uint) {
-        UserLockerInfo[] storage lockerInfos = balances[msg.sender];
-        uint balance = 0;
-        if (lockerInfos.length > 0) {
-            for (uint i=0; i< lockerInfos.length; i++) {
-                UserLockerInfo storage lockerInfo = lockerInfos[i];
-                balance = balance.add(lockerInfo.depositedAmount).sub(lockerInfo.withdrawnAmount);
-            }
+    function balanceOf(address _user) public view override returns (uint) {
+        UserLockerInfo[] storage lockerInfos = balances[_user];
+        uint _balance = 0;
+        for (uint i=0; i< lockerInfos.length; i++) {
+            UserLockerInfo storage lockerInfo = lockerInfos[i];
+            _balance = _balance.add(lockerInfo.balance);
         }
-        return balance;
+        return _balance;
     }
 
     function unlockedBalance() public view returns (uint) {
         UserLockerInfo[] storage lockerInfos = balances[msg.sender];
-        uint balance = 0;
-        if (lockerInfos.length > 0) {
-            for (uint i=0; i< lockerInfos.length; i++) {
-                UserLockerInfo storage lockerInfo = lockerInfos[i];
-                if (block.timestamp >= lockerInfo.depositTimestamp + lockerInfo.period) {
-                    balance = balance.add(lockerInfo.depositedAmount).sub(lockerInfo.withdrawnAmount);
-                }
+        uint _balance = 0;
+        for (uint i=0; i< lockerInfos.length; i++) {
+            UserLockerInfo storage lockerInfo = lockerInfos[i];
+            if (block.timestamp >= lockerInfo.depositTimestamp + lockerInfo.period) {
+                _balance = _balance.add(lockerInfo.balance);
             }
         }
-        return balance;
+        return _balance;
     }
 
     function _deposit(uint periodIndex, uint _amount) private whenNotPaused {
@@ -138,13 +133,8 @@ contract OreLockerVault is BaseVault {
         IBEP20(token).safeTransferFrom(msg.sender, address(this), _amount);
         totalAmount = totalAmount.add(_amount);
         
-        UserLockerInfo memory newLocker = UserLockerInfo(periods[periodIndex], lockerBoosters[periods[periodIndex]], _amount, 0, block.timestamp);
-        UserLockerInfo[] storage lockerInfos = balances[msg.sender];
-        if (lockerInfos.length > 0) {
-            lockerInfos.push(newLocker);
-        } else {
-            balances[msg.sender].push(newLocker);
-        }
+        UserLockerInfo memory newLocker = UserLockerInfo(periods[periodIndex], lockerBoosters[periods[periodIndex]], _amount, block.timestamp);
+        balances[msg.sender].push(newLocker);
         
         IEBChef(chef).vaultDeposited(msg.sender, _amount);
         IEBChef(chef).safeMint1155(msg.sender, oreTokenId, rewardOreAmount(_amount, lockerBoosters[periods[periodIndex]]));
@@ -159,33 +149,22 @@ contract OreLockerVault is BaseVault {
     }
 
     function _withdraw(uint _amount) private whenNotPaused {
-        bool isWithdrawAll = _amount == 0 ? true : false;
         uint amountCanWithdraw = unlockedBalance();
         require(amountCanWithdraw > 0, "no token to withdraw");
 
         uint withdrawingAmount = _amount;
-        if (isWithdrawAll) {
-            withdrawingAmount = amountCanWithdraw;
-        }
         uint withdrawingAmountMark = withdrawingAmount;
         UserLockerInfo[] storage lockerInfos = balances[msg.sender];
-        if (lockerInfos.length > 0) {
-            for (uint i=0; i< lockerInfos.length; i++) {
-                UserLockerInfo storage lockerInfo = lockerInfos[i];
-                if (block.timestamp >= lockerInfo.depositTimestamp + lockerInfo.period) {
-                    if (!isWithdrawAll) {
-                        if (withdrawingAmount > lockerInfo.depositedAmount) {
-                            lockerInfo.withdrawnAmount = lockerInfo.depositedAmount;
-                            withdrawingAmount = withdrawingAmount.sub(lockerInfo.depositedAmount);
-                        } else {
-                            lockerInfo.withdrawnAmount = withdrawingAmount;
-                            withdrawingAmount = 0;
-                            break;
-                        }
-                    } else {
-                        lockerInfo.withdrawnAmount = lockerInfo.depositedAmount;
-                        withdrawingAmount = withdrawingAmount.sub(lockerInfo.depositedAmount);
-                    }
+        for (uint i=0; i< lockerInfos.length; i++) {
+            UserLockerInfo storage lockerInfo = lockerInfos[i];
+            if (block.timestamp >= lockerInfo.depositTimestamp + lockerInfo.period) {
+                if (withdrawingAmount > lockerInfo.balance) {
+                    withdrawingAmount = withdrawingAmount.sub(lockerInfo.balance);
+                    lockerInfo.balance = 0;
+                } else {
+                    lockerInfo.balance = lockerInfo.balance.sub(withdrawingAmount);
+                    withdrawingAmount = 0;
+                    break;
                 }
             }
         }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.3;
+pragma solidity 0.8.3;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -70,7 +70,7 @@ contract EBChef is IEBChef, Initializable, OwnableUpgradeable {
     }
 
     function updateVault(address vault, address _token, uint emission) public onlyOwner {
-        require(vaults[vault].token == address(0), "Chef: vault doesn't exists");
+        require(vaults[vault].token != address(0), "Chef: vault doesn't exists");
         
         uint _emission = vaults[vault].emission;
         if (_emission != emission) {
@@ -104,7 +104,6 @@ contract EBChef is IEBChef, Initializable, OwnableUpgradeable {
     }
 
     function safeMint1155(address user, uint tokenId, uint amount) public override onlyVaults {
-        // use IERC165
         require(IEBVault(msg.sender).isErc1155Token(), "vault doesn't support 1155 token");
         IEB1155Minter(minter).mint(user, tokenId, amount);
     }

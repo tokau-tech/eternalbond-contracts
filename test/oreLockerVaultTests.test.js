@@ -37,13 +37,13 @@ describe("ore locker vault tests", () => {
         const user1StakeReceipt = await this.oreLockerVault.depositLocker(0, new BN(10).pow(new BN(27)), { from: user1 });
         expectEvent(user1StakeReceipt, "OreLockerVaultDeposited", { user: user1, period: new BN(60*60*24*7), amount: new BN(10).pow(new BN(27)) });
         expect(await this.oreLockerVault.totalAmount()).to.be.bignumber.equal(new BN(10).pow(new BN(27)));
-        expect(await this.oreLockerVault.balanceOf({ from: user1 })).to.be.bignumber.equal(new BN(10).pow(new BN(27)));
+        expect(await this.oreLockerVault.balance({ from: user1 })).to.be.bignumber.equal(new BN(10).pow(new BN(27)));
         expect(await this.oreLockerVault.unlockedBalance({ from: user1 })).to.be.bignumber.equal(new BN(0));
         
         const user1StakeReceipt1 = await this.oreLockerVault.depositLocker(1, new BN(10).pow(new BN(27)).mul(new BN(3)), { from: user1 });
         expectEvent(user1StakeReceipt1, "OreLockerVaultDeposited", { user: user1, period: new BN(60*60*24*14), amount: new BN(10).pow(new BN(27)).mul(new BN(3)) });
         expect(await this.oreLockerVault.totalAmount()).to.be.bignumber.equal(new BN(10).pow(new BN(27)).mul(new BN(4)));
-        expect(await this.oreLockerVault.balanceOf({ from: user1 })).to.be.bignumber.equal(new BN(10).pow(new BN(27)).mul(new BN(4)));
+        expect(await this.oreLockerVault.balance({ from: user1 })).to.be.bignumber.equal(new BN(10).pow(new BN(27)).mul(new BN(4)));
         expect(await this.oreLockerVault.unlockedBalance({ from: user1 })).to.be.bignumber.equal(new BN(0));
         
         await time.increase(time.duration.days(3));
@@ -57,7 +57,7 @@ describe("ore locker vault tests", () => {
         const user1WithdrawReceipt = await this.oreLockerVault.withdraw(new BN(10).pow(new BN(26)), { from: user1 });
         expectEvent(user1WithdrawReceipt, "OreLockerVaultWithdrawn", { user: user1, amount: new BN(10).pow(new BN(26))});
         expect(await this.oreLockerVault.totalAmount()).to.be.bignumber.equal(new BN(10).pow(new BN(26)).mul(new BN(39)));
-        expect(await this.oreLockerVault.balanceOf({ from: user1 })).to.be.bignumber.equal(new BN(10).pow(new BN(26)).mul(new BN(39)));
+        expect(await this.oreLockerVault.balance({ from: user1 })).to.be.bignumber.equal(new BN(10).pow(new BN(26)).mul(new BN(39)));
         expect(await this.oreLockerVault.unlockedBalance({ from: user1 })).to.be.bignumber.equal(new BN(10).pow(new BN(26)).mul(new BN(9)));
 
         await time.increase(time.duration.days(4));
@@ -72,7 +72,7 @@ describe("ore locker vault tests", () => {
         const user1StakeReceipt = await this.oreLockerVault.depositLocker(0, new BN(10).pow(new BN(27)), { from: user1 });
         expectEvent(user1StakeReceipt, "OreLockerVaultDeposited", { user: user1, period: new BN(60*60*24*7), amount: new BN(10).pow(new BN(27)) });
         expect(await this.oreLockerVault.totalAmount()).to.be.bignumber.equal(new BN(10).pow(new BN(27)));
-        expect(await this.oreLockerVault.balanceOf({ from: user1 })).to.be.bignumber.equal(new BN(10).pow(new BN(27)));
+        expect(await this.oreLockerVault.balance({ from: user1 })).to.be.bignumber.equal(new BN(10).pow(new BN(27)));
         expect(await this.oreLockerVault.unlockedBalance({ from: user1 })).to.be.bignumber.equal(new BN(0));
 
         // console.log("test ore amount: " + await this.oreLockerVault.rewardOreAmount(new BN(10).pow(new BN(27)), new BN(100)));
@@ -81,7 +81,7 @@ describe("ore locker vault tests", () => {
         const user2StakeReceipt = await this.oreLockerVault.depositLocker(1, new BN(10).pow(new BN(27)).mul(new BN(3)), { from: user2 });
         expectEvent(user2StakeReceipt, "OreLockerVaultDeposited", { user: user2, period: new BN(60*60*24*14), amount: new BN(10).pow(new BN(27)).mul(new BN(3)) });
         expect(await this.oreLockerVault.totalAmount()).to.be.bignumber.equal(new BN(10).pow(new BN(27)).mul(new BN(4)));
-        expect(await this.oreLockerVault.balanceOf({ from: user2 })).to.be.bignumber.equal(new BN(10).pow(new BN(27)).mul(new BN(3)));
+        expect(await this.oreLockerVault.balance({ from: user2 })).to.be.bignumber.equal(new BN(10).pow(new BN(27)).mul(new BN(3)));
         expect(await this.oreLockerVault.unlockedBalance({ from: user2 })).to.be.bignumber.equal(new BN(0));
 
         // console.log("test ore amount: " + await this.oreLockerVault.rewardOreAmount(new BN(10).pow(new BN(27)).mul(new BN(3)), new BN(125)));
