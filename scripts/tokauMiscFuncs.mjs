@@ -42,15 +42,17 @@ const oreLockerOwnershipTransfer = async (book, safeAddress) => {
     var oreLockerVault = new web3.eth.Contract(require('../build/contracts/OreLockerVault.json').abi, book.OreLockerVault.address);
 
 
-    // console.log(`tokauTreasurePeriphery owner: ${await tokauTreasurePeriphery.methods.owner().call()}`);
-    // console.log(`tokauStarry owner: ${await tokauStarry.methods.owner().call()}`);
+    console.log(`tokauTreasurePeriphery owner: ${await tokauTreasurePeriphery.methods.owner().call()}`);
+    console.log(`tokauStarry owner: ${await tokauStarry.methods.owner().call()}`);
     // console.log(`ebChef owner: ${await ebChef.methods.owner().call()}`);
     // console.log(`oreMinter owner: ${await oreMinter.methods.owner().call()}`);
     // console.log(`oreLockerVault owner: ${await oreLockerVault.methods.owner().call()}`);
     
+    await transferOwnership(tokauTreasurePeriphery, "0x9dd19e479de6d8d28ff837ca9a00dfd7b3c3684c", safeAddress);
+    await transferOwnership(tokauStarry, "0x9dd19e479de6d8d28ff837ca9a00dfd7b3c3684c", safeAddress);
     // await transferOwnership(ebChef, "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B", safeAddress);
-    // await  transferOwnership(oreMinter, "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B", safeAddress);
-    // await  transferOwnership(oreLockerVault, "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B", safeAddress);
+    // await transferOwnership(oreMinter, "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B", safeAddress);
+    // await transferOwnership(oreLockerVault, "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B", safeAddress);
 }
 
 const transferOwnership = async (contract, from, newOwner) => {
@@ -58,7 +60,7 @@ const transferOwnership = async (contract, from, newOwner) => {
         console.log(`before, transfering contract-${contract.address} owner from ${from} to ${newOwner}`);
         await contract.methods.transferOwnership(newOwner).send({ 
             from: from, 
-            gas: 8000000, 
+            gas: 200000, 
             gasPrice: 10*10**9
         }).on('receipt', (receipt) => {
             console.log(receipt);

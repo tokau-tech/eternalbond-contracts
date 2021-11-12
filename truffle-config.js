@@ -80,6 +80,7 @@ module.exports = {
   ],
   api_keys: {
     etherscan: process.env.BSCSCAN_API_KEY,
+    bscscan: process.env.BSCSCAN_API_KEY,
   },
   // Truffle DB is currently disabled by default; to enable it, change enabled: false to enabled: true
   //
