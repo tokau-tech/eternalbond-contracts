@@ -93,4 +93,10 @@ describe("ore locker vault tests", () => {
         await this.oreLockerVault.setLockerPeroids([new BN(60*60*24*28), new BN(60*60*24*42)], [new BN(150), new BN(200)]);
         
     });
+
+    it("tokau treasures minter test", async () => {
+        await this.tokauTreasures.grantRole(web3.utils.soliditySha3("MINTER_ROLE"), user1, { from: userAdmin });
+        await this.tokauTreasures.mint(user2, oreTokenId, new BN(1), [], { from: user1 });
+        expect(await this.tokauTreasures.balanceOf(user2, oreTokenId)).to.be.bignumber.equal(new BN(1));
+    })
 });

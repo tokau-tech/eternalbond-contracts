@@ -88,6 +88,10 @@ contract OreLockerVault is BaseVault {
         emit OreBoostersChanged(_periods, _boostRates);
     }
 
+    function updateToken(address _token) public onlyOwner {
+        setToken(_token);
+    } 
+
     function depositLocker(uint periodIndex, uint amount) public nonReentrant {
         _deposit(periodIndex, amount);
     }

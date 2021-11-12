@@ -15,13 +15,13 @@ module.exports = {
         privateKeys: [
           process.env.ADMIN_PRIVATE_KEY
         ],
-        providerOrUrl: `https://data-seed-prebsc-1-s1.binance.org:8545`,
+        providerOrUrl: `https://data-seed-prebsc-2-s3.binance.org:8545/`,
         addressIndex: 0,
       }),
       networkCheckTimeout: 1000000,
       network_id: 97,
-      confirmations: 10,
-      timeoutBlocks: 200,
+      // confirmations: 10,
+      timeoutBlocks: 2000,
       skipDryRun: true
     },
     bscMainNet: {
@@ -35,7 +35,7 @@ module.exports = {
       networkCheckTimeout: 1000000,
       network_id: 56,
       confirmations: 10,
-      timeoutBlocks: 200,
+      timeoutBlocks: 2000,
       skipDryRun: true
     },
     rinkeby: {
@@ -74,6 +74,12 @@ module.exports = {
     solc: {
       version: "0.8.3",
     },
+  },
+  plugins: [
+    'truffle-plugin-verify'
+  ],
+  api_keys: {
+    etherscan: process.env.BSCSCAN_API_KEY,
   },
   // Truffle DB is currently disabled by default; to enable it, change enabled: false to enabled: true
   //

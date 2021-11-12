@@ -1,0 +1,156 @@
+{
+    "gnosisSafe": {
+        "bscMainNet": {
+            "project": "0x0d230910ba683dc86e4876f55cf69e4827f9ed5d",
+            "team": "0x7c38195474ffdf79769c895c7b450a00e909ac9f"
+        },
+        "bscTestNet": {
+            "devSafe": "0x7915B7Cc3d4695E2f45950a703Ade6B64488c003",
+            "devSafe2": "0xd3138C773Db0618106a4d9967040137A68c255B1"
+        },
+        "rinkeby": {
+            "devSafe": "0x3EcA61E37dcCe3023B5282A8250BEFF5Ea0Bedb4"
+        }
+    },
+    "bscMainNet": {
+        "TokAu": {
+            "address": "0xC409eC8a33f31437Ed753C82EEd3c5F16d6D7e22",
+            "owner": "0x9dD19e479De6d8D28FF837Ca9a00dfD7b3c3684c",
+            "minter": []
+        },
+        "TokAuStarry": {
+            "address": "0x4E64198C1E13248BfC0e63D53E03460dbB383a94",
+            "owner": "0x9dD19e479De6d8D28FF837Ca9a00dfD7b3c3684c",
+            "minter": []
+        },
+        "TokAuTreasurePeriphery": {
+            "address": "0x07FE07226a376e8B74e4da2094537843fdF16318",
+            "owner": "0x9dD19e479De6d8D28FF837Ca9a00dfD7b3c3684c",
+            "minter": []
+        },
+        "TokAuTreasures": {
+            "address": "0x20ADC91E3516a7C8FA46b0Ea11B28BC1D271171d",
+            "owner": "",
+            "minter": []
+        },
+        "StarryBatchMintTransferHelper": {
+            "address": "0xda6004843db39d2a557a9288a43624de55e27087",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "EBNftStakeRateHelper": {
+            "address": "0xF8814840e9Ea93586AfcEb48782DE21fdD3da211",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "EBChef": {
+            "address": "0x0F663f78C078f80d7D42F478399F4ab28C3f0315",
+            "owner": "",
+            "minter": []
+        },
+        "OreLockerVault": {
+            "address": "0xb04DC9D733a3933C0fF10ee197613413531865BB",
+            "owner": "",
+            "minter": []
+        },
+        "OreMinter": {
+            "address": "0xFFee49BBD84eCbc3F5843042aBafc85cbF25F71E",
+            "owner": "",
+            "minter": []
+        }
+    },
+    "bscTestNet": {
+        "TokAu": {
+            "address": "0xd08f0B68400C4DD2e15BC2d55a3b26536C9F6E6f",
+            "owner": "0x79c41df97f27485d823ecb89e97b388fc617acff",
+            "minter": []
+        },
+        "TokAuStarry": {
+            "address": "0xd03f17875750D68dE66bbf1dc6A07573D6B3e7b6",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "TokAuTreasurePeriphery": {
+            "address": "",
+            "owner": "",
+            "minter": []
+        },
+        "TokAuTreasures": {
+            "address": "0x181321E1b606718A07101Fb8AD2507aC9A3c36E6",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "StarryBatchMintTransferHelper": {
+            "address": "0x49E776DD21df9FfCA0b73F6E521D3bf86613AfCd",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "EBNftStakeRateHelper": {
+            "address": "0x12745Db71188b86aABBB287e6919859ABf40C569",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "EBChef": {
+            "address": "0x46510782b88B4Aa93aCae8987E07c17A75165B8B",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "OreLockerVault": {
+            "address": "0x4482cB9623938d490E405a0Df3310481713454F2",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "OreMinter": {
+            "address": "0x640d631eFFaa8Eb5239de829eBFdd8A38c1bBdFb",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        }
+    },
+    "rinkeby": {
+        "TokAu": {
+            "address": "0x5F42E430D8AE8982708a47d5FAd30FC21214d272",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "TokAuStarry": {
+            "address": "",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "TokAuTreasurePeriphery": {
+            "address": "",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "TokAuTreasures": {
+            "address": "0xFBdA27216a80A86491C2D0c49918b4AC66479B53",
+            "owner": "",
+            "minter": []
+        },
+        "StarryBatchMintTransferHelper": {
+            "address": "",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "EBNftStakeRateHelper": {
+            "address": "",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "EBChef": {
+            "address": "0x673fA4AF6bDEbD1B21DF93a532FBe21DFfB8b5A6",
+            "owner": "0x4eb38bC24370c4F796bfa7C68c1781F20b683b3B",
+            "minter": []
+        },
+        "OreLockerVault": {
+            "address": "0x2C7f69d19210C82ce5246fE4bFBC944b2a0A9388",
+            "owner": "",
+            "minter": []
+        },
+        "OreMinter": {
+            "address": "0x1371aD74423FE5624F4bcc76FcD474602d52BB2e",
+            "owner": "",
+            "minter": []
+        }
+    }
+}
